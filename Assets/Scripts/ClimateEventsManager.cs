@@ -106,14 +106,15 @@ public class ClimateEventsManager : MonoBehaviour
             yield return new WaitForSeconds(UnityEngine.Random.Range(3f, 6f)); // Está linea lo que nos permite que haya un tiempo tipo como de recarga para que vuelva a salir el efecto, esta configuarada
             //entre 3 a 6 segundos
 
-            if (lightningImage != null)
+            if (lightningImage != null) //Verifica que la imagen exista
             {
-                lightningImage.color = new Color(1, 1, 1, 0.8f);
-                yield return new WaitForSeconds(0.1f);
-                lightningImage.color = new Color(1, 1, 1, 0);
+                lightningImage.color = new Color(1, 1, 1, 0.8f); //Activa el falsh  del rayo haciendolo visible en 0.8 de opacidad
+                yield return new WaitForSeconds(0.1f); //Espera 0.1 segundos para que sea muy rapido el efecto tipo un destello
+                lightningImage.color = new Color(1, 1, 1, 0); // Desactiva el efecto haciendolo invisible con 0 de opacidad
             }
         }
     }
+
 
 
 
