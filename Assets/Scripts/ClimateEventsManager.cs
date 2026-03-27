@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class ClimateEventsManager : MonoBehaviour
@@ -11,20 +12,35 @@ public class ClimateEventsManager : MonoBehaviour
     public enum ClimateState { Clear, Rain, Storm } //Enumera los climas del 0 al 2 siendo 0 - Despejado, 1 - Lluvia y 2 - tormenta
     public ClimateState CurrentClimate { get; private set; } = ClimateState.Clear;
 
-    //Evento (opcional, por si otros scripts quieren reaccionar)
-    public event Action<ClimateState> OnClimateChanged;
+    
 
     //Tiempo que va a durar cada clima
-    public float minTime = 10f;
-    public float maxTime = 20f;
-    private float timer;
+    public float minTime = 5f;
+    public float maxTime = 10f;
+  
+    [SerializeField] private float timer;           // Ahora se ve en el Inspector
+    [SerializeField] private ClimateState InspectorClimateState; // Muestra clima actual
+
 
     // Efectos visuales de los climas para sensación de ejecución
     public ParticleSystem rainParticles;
     public ParticleSystem stormParticles;
     public UnityEngine.UI.Image lightningImage;
 
- 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject); // Evita tener dos instancias
+        }
+    }
+
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -42,7 +58,7 @@ public class ClimateEventsManager : MonoBehaviour
         {
             NextClimate(); //Llama a la funcion de cambio de clima
 
-            // Se define un tiempo aleatorio entre 10 segundos a 20 segundos
+            // Se define un tiempo aleatorio entre 5 segundos a 10 segundos
             timer = UnityEngine.Random.Range(minTime, maxTime);
         }
     }
@@ -59,6 +75,8 @@ public class ClimateEventsManager : MonoBehaviour
     void SetClimate(ClimateState newClimate)
     {
         CurrentClimate = newClimate; //Aqui se va a guardar el clima que se va a ejecutar. 
+
+        InspectorClimateState = newClimate; // Se actualiza la parte que informa en el inspector el estado del clima
 
         // Los efectos del clima anterior se borrarar de la pantalla
         if (rainParticles != null) //Si hay lluvia la desactiva
@@ -93,8 +111,7 @@ public class ClimateEventsManager : MonoBehaviour
                 break;
         }
 
-        // Avisar a otros scripts
-        OnClimateChanged?.Invoke(newClimate);
+        
     }
 
 
@@ -103,7 +120,7 @@ public class ClimateEventsManager : MonoBehaviour
     {
         while (CurrentClimate == ClimateState.Storm) //Un while que funciona si el clima es tormenta ----> Seria algo tipo; mientras el clima sea tormenta ejecuta lo de down
         {
-            yield return new WaitForSeconds(UnityEngine.Random.Range(3f, 6f)); // Está linea lo que nos permite que haya un tiempo tipo como de recarga para que vuelva a salir el efecto, esta configuarada
+            yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 3f)); // Está linea lo que nos permite que haya un tiempo tipo como de recarga para que vuelva a salir el efecto, esta configuarada
             //entre 3 a 6 segundos
 
             if (lightningImage != null) //Verifica que la imagen exista
