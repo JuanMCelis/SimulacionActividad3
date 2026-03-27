@@ -68,6 +68,7 @@ public class ClimateEventsManager : MonoBehaviour
     void NextClimate()
     {
 
+        
         int randomClimate = UnityEngine.Random.Range(0, 3); // Nos bota un numero del 0 al 2
         SetClimate((ClimateState)randomClimate); //Segun el numero que sale se escoge el clima al que va a pasar. Llama a la enum del inicio y si sale 0 despejado 1 lluvia y 2 tormenta.
     }
@@ -120,7 +121,7 @@ public class ClimateEventsManager : MonoBehaviour
     {
         while (CurrentClimate == ClimateState.Storm) //Un while que funciona si el clima es tormenta ----> Seria algo tipo; mientras el clima sea tormenta ejecuta lo de down
         {
-            yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 3f)); // Está linea lo que nos permite que haya un tiempo tipo como de recarga para que vuelva a salir el efecto, esta configuarada
+            yield return new WaitForSeconds(UnityEngine.Random.Range(2f, 5f)); // Está linea lo que nos permite que haya un tiempo tipo como de recarga para que vuelva a salir el efecto, esta configuarada
             //entre 3 a 6 segundos
 
             if (lightningImage != null) //Verifica que la imagen exista
