@@ -21,7 +21,7 @@ public class Predator : MonoBehaviour
     private void Start()
     {
         destination = transform.position;
-        initialSpeed = speed; // Guarda el valor que pusiste en el Inspector, por ejemplo 1.5
+        initialSpeed = speed; // Guarda el valor base del depredador
     }
 
     public void Simulate(float h)
@@ -150,8 +150,8 @@ public class Predator : MonoBehaviour
     {
         age += h;
 
-        float speedReduction = Mathf.Floor(age / 12f) * 0.2f;
-        speed = Mathf.Max(0.1f, initialSpeed - speedReduction);
+        float speedReduction = Mathf.Floor(age / 12f) * 0.2f; //Divide la edad en 12 (Math.floor redondea) cada 12 años del depredador se reduce la velocidad 0.2f
+        speed = Mathf.Max(0.1f, initialSpeed - speedReduction);// Resta la velocidad base con la reduccion de los años hasta llegar a max 0.1f
     }
 
     void CheckState()
