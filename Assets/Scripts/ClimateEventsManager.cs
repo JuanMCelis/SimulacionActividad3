@@ -6,11 +6,11 @@ public class ClimateEventsManager : MonoBehaviour
 {
 
     //Instancia global para poder llamar esta clase desde otros scripts
-    public static ClimateEventsManager Instance { get; private set; }
+    public static ClimateEventsManager Instance { get; private set; } //solo puede asignarle valores desde esta clase pero se puede leer desde cualquier clase fuera
 
     // Tipos de clima (despejado, lluvia y tormenta)
     public enum ClimateState { Clear, Rain, Storm } //Enumera los climas del 0 al 2 siendo 0 - Despejado, 1 - Lluvia y 2 - tormenta
-    public ClimateState CurrentClimate { get; private set; } = ClimateState.Clear;
+    public ClimateState CurrentClimate { get; private set; } = ClimateState.Clear; //Inicializa en despejado. Se modifica unicamente desde esta clase, se puede leer desde otras
 
 
 
@@ -18,25 +18,26 @@ public class ClimateEventsManager : MonoBehaviour
     public float minTime = 5f;
     public float maxTime = 10f;
 
-    [SerializeField] private float timer;           // Ahora se ve en el Inspector
-    [SerializeField] private ClimateState InspectorClimateState; // Muestra clima actual
+    public float timer;//Temporizador que va a controlar el tiempo de cuando cambia el clima
+   public ClimateState InspectorClimateState; // Muestra clima actual
 
 
-    // Efectos visuales de los climas para sensación de ejecución
+    // Efectos visuales de los climas para sensación de ejecución (variables)
     public ParticleSystem rainParticles;
     public ParticleSystem stormParticles;
     public UnityEngine.UI.Image lightningImage;
-    private Coroutine lightningCoroutine; // Guarda la referencia de la coroutine del rayo
+    private Coroutine lightningCoroutine; // Guarda la referencia de la coroutine del rayo para poder detenerla cuando el clima cambie.
 
-    void Awake()
+    void Awake() //funcion que se inicia cuando se carga la escena
     {
-        if (Instance == null)
+        if (Instance == null) //Si no existe la instancia
         {
-            Instance = this;
+            Instance = this; // Se asigna esta instancia a Instance para que cualquier otro
+            //script pueda acceder a ella.
         }
         else
         {
-            Destroy(gameObject); // Evita tener dos instancias
+            Destroy(gameObject); // Evita tener dos instancias si ya existe una
         }
     }
 
@@ -45,21 +46,21 @@ public class ClimateEventsManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        timer = UnityEngine.Random.Range(minTime, maxTime);
+        timer = UnityEngine.Random.Range(minTime, maxTime);//Inicializa el timer con un valor random de entre 5 a 10 secundios
         SetClimate(ClimateState.Clear); //Esta linea lo que hace es que siempre el clima empezara definido como despejado
     }
 
     // Update is called once per frame
     void Update()
     {
-        timer -= Time.deltaTime;
+        timer -= Time.deltaTime; //Reduce el temporizador según el tiempo transcurrido
 
         // Cuando el temporizador  para cambiar al clima llega a 0 el clima va a cambiar
         if (timer <= 0f)
         {
             NextClimate(); //Llama a la funcion de cambio de clima
 
-            // Se define un tiempo aleatorio entre 5 segundos a 10 segundos
+            // Se reinicia el timer con un valor entre 5 segundos a 10 segundos
             timer = UnityEngine.Random.Range(minTime, maxTime);
         }
     }
@@ -80,7 +81,7 @@ public class ClimateEventsManager : MonoBehaviour
 
         InspectorClimateState = newClimate; // Se actualiza la parte que informa en el inspector el estado del clima
 
-        // Detiene cualquier coroutine de rayo en curso
+        // Detiene cualquier coroutine de rayo en curso para que no haya rayos en el  clima despejado y lluvia
         if (lightningCoroutine != null)
         {
             StopCoroutine(lightningCoroutine);
@@ -98,7 +99,7 @@ public class ClimateEventsManager : MonoBehaviour
 
         if (lightningImage != null)
         {
-            lightningImage.color = new Color(1, 1, 1, 0); // hace invisible el rayo
+            lightningImage.color = new Color(1, 1, 1, 0); // hace invisible el rayo con la opacidad a 0
             if (lightningCoroutine != null)
             {
                 StopCoroutine(lightningCoroutine); // Detener coroutine anterior
@@ -139,7 +140,7 @@ public class ClimateEventsManager : MonoBehaviour
         while (CurrentClimate == ClimateState.Storm) //Un while que funciona si el clima es tormenta ----> Seria algo tipo; mientras el clima sea tormenta ejecuta lo de down
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(2f, 5f)); // Está linea lo que nos permite que haya un tiempo tipo como de recarga para que vuelva a salir el efecto, esta configuarada
-            //entre 3 a 6 segundos
+            //entre 2 a 5 segundos
 
             if (lightningImage != null) //Verifica que la imagen exista
             {
@@ -156,14 +157,14 @@ public class ClimateEventsManager : MonoBehaviour
     {
         switch (CurrentClimate) //Segun el clima 
         {
-            case ClimateState.Rain:
+            case ClimateState.Rain://Reduce la vision un 20%
                 return 0.8f;
 
-            case ClimateState.Storm:
+            case ClimateState.Storm: //Reduce la visión un 50% 
                 return 0.5f;
 
             default:
-                return 1f;
+                return 1f; //No reduce la vision
         }
     }
 
