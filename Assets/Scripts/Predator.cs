@@ -7,6 +7,7 @@ public class Predator : MonoBehaviour
     public float age = 0;
     public float maxAge = 20;
     public float speed = 1f;
+    public float initialSpeed;
     public float visionRange = 5f;
     public float climateStateVisionRange;
 
@@ -20,6 +21,7 @@ public class Predator : MonoBehaviour
     private void Start()
     {
         destination = transform.position;
+        initialSpeed = speed; // Guarda el valor que pusiste en el Inspector, por ejemplo 1.5
     }
 
     public void Simulate(float h)
@@ -28,8 +30,8 @@ public class Predator : MonoBehaviour
 
         this.h = h;
 
-        climateStateVisionRange = visionRange * ClimateEventsManager.Instance.GetVisionMultiplier(); //Esta linea lo que hace es que a la vision normal la modifique multiplicando por 0.8 en tormenta entonces
-        // la vision se disminuira de 5f a 2.5f y en tormenta de 5f a 1f y si está despejado se multiplica por 1 y sigue en visionRange q es 5f.
+        climateStateVisionRange = visionRange * ClimateEventsManager.Instance.GetVisionMultiplier(); //Esta linea lo que hace es que a la vision normal la modifique multiplicando por 0.8 en lluvia entonces
+        // la vision se disminuira de 8f a 6.5f y en tormenta de 8f a 4f y si está despejado se multiplica por 1 y sigue en visionRange q es 5f.
 
        
         switch (currentState)
@@ -147,6 +149,9 @@ public class Predator : MonoBehaviour
     void Age()
     {
         age += h;
+
+        float speedReduction = Mathf.Floor(age / 12f) * 0.2f;
+        speed = Mathf.Max(0.1f, initialSpeed - speedReduction);
     }
 
     void CheckState()

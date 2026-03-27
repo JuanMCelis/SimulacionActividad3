@@ -28,8 +28,8 @@ public class Bunny : MonoBehaviour
 
         this.h = h;
 
-        climateStateVisionRange = visionRange * ClimateEventsManager.Instance.GetVisionMultiplier(); //Esta linea lo que hace es que a la vision normal la modifique multiplicando por 0.5 en lluvia entonces
-        // la vision se disminuira de 5f a 2.5f y en tormenta de 5f a 1f y si está despejado se multiplica por 1 y sigue en visionRange q es 5f.  
+        climateStateVisionRange = visionRange * ClimateEventsManager.Instance.GetVisionMultiplier(); //Esta linea lo que hace es que a la vision normal la modifique multiplicando por 0.8 en lluvia entonces
+        // la vision se disminuira de 5f a 4f y en tormenta 0.5 de 5f a 2.5f y si está despejado se multiplica por 1 y sigue en visionRange q es 5f.  
 
         EvaluateState();
 
