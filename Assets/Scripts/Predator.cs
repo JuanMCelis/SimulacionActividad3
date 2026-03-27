@@ -113,14 +113,14 @@ public class Predator : MonoBehaviour
     void SelectNewDestination()
     {
         Vector3 direction = new Vector3(
-            Random.Range(-visionRange, visionRange),
-            Random.Range(-visionRange, visionRange),
+            Random.Range(-climateStateVisionRange, climateStateVisionRange),
+            Random.Range(-climateStateVisionRange, climateStateVisionRange),
             0
         );
 
         Vector3 targetPoint = transform.position + direction;
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.normalized, visionRange, LayerMask.GetMask("Obstacles"));
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, direction.normalized, climateStateVisionRange, LayerMask.GetMask("Obstacles"));
 
         if (hit.collider != null)
         {
@@ -161,7 +161,7 @@ public class Predator : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, visionRange);
+        Gizmos.DrawWireSphere(transform.position, climateStateVisionRange);
 
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(destination, 0.2f);
