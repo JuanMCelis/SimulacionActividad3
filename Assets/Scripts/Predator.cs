@@ -8,6 +8,7 @@ public class Predator : MonoBehaviour
     public float maxAge = 20;
     public float speed = 1f;
     public float visionRange = 5f;
+    public float climateStateVisionRange;
 
     [Header("Predator States")]
     public bool isAlive = true;
@@ -27,6 +28,10 @@ public class Predator : MonoBehaviour
 
         this.h = h;
 
+        climateStateVisionRange = visionRange * ClimateEventsManager.Instance.GetVisionMultiplier(); //Esta linea lo que hace es que a la vision normal la modifique multiplicando por 0.8 en tormenta entonces
+        // la vision se disminuira de 5f a 2.5f y en tormenta de 5f a 1f y si está despejado se multiplica por 1 y sigue en visionRange q es 5f.
+
+       
         switch (currentState)
         {
             case PredatorState.Exploring:
@@ -167,7 +172,7 @@ public class Predator : MonoBehaviour
 
     Bunny FindNearestBunny()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, visionRange, LayerMask.GetMask("Bunnies"));
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, climateStateVisionRange, LayerMask.GetMask("Bunnies"));
         Debug.Log($"Predator {name} encontró {hits.Length} colliders en su rango");
         Bunny nearest = null;
         float minDist = Mathf.Infinity;
