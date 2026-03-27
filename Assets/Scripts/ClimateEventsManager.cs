@@ -116,15 +116,20 @@ public class ClimateEventsManager : MonoBehaviour
     }
 
 
+    // Funcion para reducir la vision del conejo y el depredador segund el clima
+    public float GetVisionMultiplier()
+    {
+        switch (CurrentClimate) //Segun el clima 
+        {
+            case ClimateState.Rain:
+                return 0.8f;
 
+            case ClimateState.Storm:
+                return 0.5f;
 
-
-
-
-
-
-
-
-
+            default:
+                return 1f;
+        }
+    }
 
 }
