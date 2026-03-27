@@ -12,12 +12,12 @@ public class ClimateEventsManager : MonoBehaviour
     public enum ClimateState { Clear, Rain, Storm } //Enumera los climas del 0 al 2 siendo 0 - Despejado, 1 - Lluvia y 2 - tormenta
     public ClimateState CurrentClimate { get; private set; } = ClimateState.Clear;
 
-    
+
 
     //Tiempo que va a durar cada clima
     public float minTime = 5f;
     public float maxTime = 10f;
-  
+
     [SerializeField] private float timer;           // Ahora se ve en el Inspector
     [SerializeField] private ClimateState InspectorClimateState; // Muestra clima actual
 
@@ -26,6 +26,7 @@ public class ClimateEventsManager : MonoBehaviour
     public ParticleSystem rainParticles;
     public ParticleSystem stormParticles;
     public UnityEngine.UI.Image lightningImage;
+    private Coroutine lightningCoroutine; // Guarda la referencia de la coroutine del rayo
 
     void Awake()
     {
@@ -52,7 +53,7 @@ public class ClimateEventsManager : MonoBehaviour
     void Update()
     {
         timer -= Time.deltaTime;
-        
+
         // Cuando el temporizador  para cambiar al clima llega a 0 el clima va a cambiar
         if (timer <= 0f)
         {
@@ -68,7 +69,7 @@ public class ClimateEventsManager : MonoBehaviour
     void NextClimate()
     {
 
-        
+
         int randomClimate = UnityEngine.Random.Range(0, 3); // Nos bota un numero del 0 al 2
         SetClimate((ClimateState)randomClimate); //Segun el numero que sale se escoge el clima al que va a pasar. Llama a la enum del inicio y si sale 0 despejado 1 lluvia y 2 tormenta.
     }
@@ -79,6 +80,15 @@ public class ClimateEventsManager : MonoBehaviour
 
         InspectorClimateState = newClimate; // Se actualiza la parte que informa en el inspector el estado del clima
 
+        // Detiene cualquier coroutine de rayo en curso
+        if (lightningCoroutine != null)
+        {
+            StopCoroutine(lightningCoroutine);
+            lightningCoroutine = null;
+        }
+
+
+
         // Los efectos del clima anterior se borrarar de la pantalla
         if (rainParticles != null) //Si hay lluvia la desactiva
             rainParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -86,8 +96,15 @@ public class ClimateEventsManager : MonoBehaviour
         if (stormParticles != null) //Si hay tormenta la desactiva
             stormParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
-        if (lightningImage != null) //El rayo lo hace invisible 
-            lightningImage.color = new Color(1, 1, 1, 0);
+        if (lightningImage != null)
+        {
+            lightningImage.color = new Color(1, 1, 1, 0); // hace invisible el rayo
+            if (lightningCoroutine != null)
+            {
+                StopCoroutine(lightningCoroutine); // Detener coroutine anterior
+                lightningCoroutine = null;
+            }
+        }
 
         // Un switch para activar un nuevo clima
         switch (newClimate)
@@ -107,12 +124,12 @@ public class ClimateEventsManager : MonoBehaviour
                 if (stormParticles != null)
                     stormParticles.Play(); //Hace que salgan las cosas para simular la tormenta
 
-                if (lightningImage != null)  
-                    StartCoroutine(LightningFlash());  //Activa flashes para simular rayos
+                if (lightningImage != null)
+                   lightningCoroutine = StartCoroutine(LightningFlash());  //Activa flashes para simular rayos
                 break;
         }
 
-        
+
     }
 
 
